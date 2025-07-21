@@ -1,3 +1,7 @@
+#Author: Ben Archer
+#Date: 07/21/2025
+#Assignment: Final Project SDEV 120
+
 from tkinter import *
 from tkinter import messagebox
 from types import LambdaType
