@@ -203,8 +203,12 @@ def checkIfWon():
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
 
+    # check if tie
+    if count == 9 and winner == False
+        messagebox.showinfo("Tic Tac Toe", "You tied! You both lose!")
+        disable_all_buttons()
 
-
+# Button clicked function
 def b_click(b):
     global clicked, count
 
@@ -255,7 +259,7 @@ options_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Reset", command=reset)
 
-reset() 
+reset()
 
 root.mainloop()
 
