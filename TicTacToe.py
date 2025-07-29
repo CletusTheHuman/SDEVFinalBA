@@ -6,9 +6,6 @@ from tkinter import *
 from tkinter import messagebox
 from types import LambdaType
 
-root = Tk()
-root.title('SDEV 120 Tic-Tac-Toe')
-#root.geometry("1200x710")
 
 # X starts so true
 clicked = True
@@ -20,27 +17,25 @@ def reset():
     global clicked, count
     clicked = True
     count = 0
+
+#reset button takes you back to start menu
+def reset_to_start_menu():
+    global root
+    root.destroy()
+    start_menu()
+
     # Build buttons
-    b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b1))
-    b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b2))
-    b3 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b3))
+    b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b1))
+    b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b2))
+    b3 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b3))
 
-    b4 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b4))
-    b5 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b5))
-    b6 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b6))
+    b4 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b4))
+    b5 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b5))
+    b6 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b6))
 
-    b7 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b7))
-    b8 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b8))
-    b9 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-                command=lambda: b_click(b9))
+    b7 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b7))
+    b8 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b8))
+    b9 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b9))
 
     # Grid our buttons to the screen
     b1.grid(row=0, column=0)
@@ -54,6 +49,7 @@ def reset():
     b7.grid(row=2, column=0)
     b8.grid(row=2, column=1)
     b9.grid(row=2, column=2)
+
 # disable all the buttons
 def disable_all_buttons():
     b1.config(state=DISABLED)
@@ -128,8 +124,8 @@ def checkIfWon():
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
     elif b3["text"] == "X" and b5["text"] == "X" and b7["text"] == "X":
-        b1.config(bg="green")
-        b4.config(bg="green")
+        b3.config(bg="green")
+        b5.config(bg="green")
         b7.config(bg="green")
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
@@ -196,15 +192,15 @@ def checkIfWon():
         disable_all_buttons()
 
     elif b3["text"] == "O" and b5["text"] == "O" and b7["text"] == "O":
-        b1.config(bg="green")
-        b4.config(bg="green")
+        b3.config(bg="green")
+        b5.config(bg="green")
         b7.config(bg="green")
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
 
     # check if tie
-    if count == 9 and winner == False
+    if count == 9 and winner == False:
         messagebox.showinfo("Tic Tac Toe", "You tied! You both lose!")
         disable_all_buttons()
 
@@ -224,42 +220,57 @@ def b_click(b):
         checkIfWon()
     else:
         messagebox.showerror("Tic Tac Toe", "Hey! Someone already chose this box!\n          Pick somewhere else!")
-#Build buttons
-b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b1))
-b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b2))
-b3 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b3))
 
-b4 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b4))
-b5 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b5))
-b6 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b6))
 
-b7 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b7))
-b8 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b8))
-b9 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b9))
+def run_game():
+    global root, b1, b2, b3, b4, b5, b6, b7, b8, b9
+    root = Tk()
+    root.title('SDEV 120 Tic-Tac-Toe')
 
-#Grid our buttons to the screen
-b1.grid(row=0, column=0)
-b2.grid(row=0, column=1)
-b3.grid(row=0, column=2)
+    # Build buttons
+    global b1, b2, b3, b4, b5, b6, b7, b8, b9
+    b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b1))
+    b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b2))
+    b3 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b3))
+    b4 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b4))
+    b5 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b5))
+    b6 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b6))
+    b7 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b7))
+    b8 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b8))
+    b9 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b9))
 
-b4.grid(row=1, column=0)
-b5.grid(row=1, column=1)
-b6.grid(row=1, column=2)
+    b1.grid(row=0, column=0)
+    b2.grid(row=0, column=1)
+    b3.grid(row=0, column=2)
+    b4.grid(row=1, column=0)
+    b5.grid(row=1, column=1)
+    b6.grid(row=1, column=2)
+    b7.grid(row=2, column=0)
+    b8.grid(row=2, column=1)
+    b9.grid(row=2, column=2)
 
-b7.grid(row=2, column=0)
-b8.grid(row=2, column=1)
-b9.grid(row=2, column=2)
+    my_menu = Menu(root)
+    root.config(menu=my_menu)
+    options_menu = Menu(my_menu, tearoff=False)
+    my_menu.add_cascade(label="Reset", menu=options_menu)
+    options_menu.add_command(label="Reset", command=reset_to_start_menu)
 
-# Create Menu
-my_menu = Menu(root)
-root.config(menu=my_menu)
+    reset()
+    root.mainloop()
 
-#Create Options Menu
-options_menu = Menu(my_menu, tearoff=False)
-my_menu.add_cascade(label="Options", menu=options_menu)
-options_menu.add_command(label="Reset", command=reset)
 
-reset()
+def start_menu():
+    start_win = Tk()
+    start_win.title("Tic-Tac-Toe Game Menu")
+    start_win.geometry("300x200")
 
-root.mainloop()
+    Label(start_win, text="Welcome to Tic-Tac-Toe!", font=("Helvetica", 16)).pack(pady=20)
 
+    Button(start_win, text="Start Game", font=("Helvetica", 14), width=15, command=lambda: [start_win.destroy(), run_game()]).pack(pady=10)
+    Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=start_win.quit).pack(pady=10)
+
+    start_win.mainloop()
+
+
+# Start from the start menu
+start_menu()
