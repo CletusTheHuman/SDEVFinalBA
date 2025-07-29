@@ -1,7 +1,7 @@
 #Author: Ben Archer
 #Date: 07/21/2025
 #Assignment: Final Project SDEV 120
-
+from operator import truediv
 from tkinter import *
 from tkinter import messagebox
 from types import LambdaType
@@ -10,10 +10,24 @@ root = Tk()
 root.title('SDEV 120 Tic-Tac-Toe')
 #root.geometry("1200x710")
 
+# X starts so true
+clicked = true
+count = 0
+
 #Button clicked Function
 def b_click(b):
-    pass
+    global clicked, count
 
+    if b["text"] == " " and clicked == True:
+        b["text"] = "X"
+        clicked = False
+        count += 1
+    elif b["text"] == " " and clicked == False:
+        b["text"] = "O"
+        Clicked = True
+        count += 1
+    else:
+        messagebox.showerror("Tic Tac Toe", "Hey! Someone already chose this box!\nPick somewhere else!")
 #Build buttons
 b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b1))
 b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b2))
