@@ -4,12 +4,22 @@
 from operator import truediv
 from tkinter import *
 from tkinter import messagebox
-from types import LambdaType
-
+import datetime
 
 # X starts so true
 clicked = True
 count = 0
+winner = False
+
+LEADERBOARD_FILE = "leaderboard.txt"
+
+def center_window(window, width, height):
+    """Center the tkinter window on the screen."""
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = int((screen_width / 2) - (width / 2))
+    y = int((screen_height / 2) - (height / 2))
+    window.geometry(f"{width}x{height}+{x}+{y}")
 
 # Start the game over
 def reset():
@@ -17,6 +27,8 @@ def reset():
     global clicked, count
     clicked = True
     count = 0
+    for b in [b1, b2, b3, b4, b5, b6, b7, b8, b9]:
+        b.config(text=" ", bg="SystemButtonFace", state=NORMAL)
 
 #reset button takes you back to start menu
 def reset_to_start_menu():
@@ -24,52 +36,87 @@ def reset_to_start_menu():
     root.destroy()
     start_menu()
 
-    # Build buttons
-    b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b1))
-    b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b2))
-    b3 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b3))
-
-    b4 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b4))
-    b5 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b5))
-    b6 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b6))
-
-    b7 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b7))
-    b8 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b8))
-    b9 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b9))
-
-    # Grid our buttons to the screen
-    b1.grid(row=0, column=0)
-    b2.grid(row=0, column=1)
-    b3.grid(row=0, column=2)
-
-    b4.grid(row=1, column=0)
-    b5.grid(row=1, column=1)
-    b6.grid(row=1, column=2)
-
-    b7.grid(row=2, column=0)
-    b8.grid(row=2, column=1)
-    b9.grid(row=2, column=2)
-
 # disable all the buttons
 def disable_all_buttons():
-    b1.config(state=DISABLED)
-    b2.config(state=DISABLED)
-    b3.config(state=DISABLED)
-    b4.config(state=DISABLED)
-    b5.config(state=DISABLED)
-    b6.config(state=DISABLED)
-    b7.config(state=DISABLED)
-    b8.config(state=DISABLED)
-    b9.config(state=DISABLED)
+    for b in [b1, b2, b3, b4, b5, b6, b7, b8, b9]:
+        b.config(state=DISABLED)
 
+def prompt_for_initials():
+    """Popup window to get exactly 3-letter initials from user, max length 3 enforced"""
+    popup = Toplevel()
+    popup.title("Enter your initials")
+    center_window(popup, 300, 150)
 
-# Check to see if someone won
+    Label(popup, text="Winner! Please Enter your initials:").pack(pady=10)
+
+    initials_var = StringVar()
+
+    entry = Entry(popup, textvariable=initials_var, width=5, font=("Helvetica", 18))
+    entry.pack(pady=5)
+    entry.focus_set()
+
+    def on_key(event):
+        value = initials_var.get()
+        if len(value) > 3:
+            initials_var.set(value[:3])
+    entry.bind("<KeyRelease>", on_key)
+
+    def submit():
+        val = initials_var.get().upper()
+        if len(val) == 3 and val.isalpha():
+            popup.destroy()
+        else:
+            messagebox.showerror("Error", "Please enter exactly 3 letters.")
+
+    Button(popup, text="Submit", command=submit).pack(pady=10)
+
+    popup.grab_set()
+    popup.wait_window()
+
+    val = initials_var.get().upper()
+    if len(val) == 3 and val.isalpha():
+        return val
+    return None
+
+def save_winner_to_leaderboard(winner):
+    """Save winner initials, winner X/O, and datetime to leaderboard file, then return to start menu"""
+    initials = prompt_for_initials()
+    if initials:
+        timestamp = datetime.datetime.now().strftime("%m/%d/%Y %I:%M %p")
+        with open(LEADERBOARD_FILE, "a") as f:
+            f.write(f"{timestamp} - {winner} wins - {initials}\n")
+    global root
+    if root:
+        root.destroy()
+    start_menu()
+
+def show_leaderboard():
+    """Show leaderboard window reading from leaderboard file"""
+    lb_win = Toplevel()
+    lb_win.title("Game History")
+    center_window(lb_win, 400, 350)
+
+    Label(lb_win, text="Past Winners", font=("Helvetica", 16, "bold")).pack(pady=10)
+
+    text_box = Text(lb_win, width=40, height=15, font=("Helvetica", 12))
+    text_box.pack(padx=10, pady=10)
+
+    try:
+        with open(LEADERBOARD_FILE, "r") as f:
+            content = f.read()
+    except FileNotFoundError:
+        content = "No leaderboard records found."
+
+    text_box.insert(END, content)
+    text_box.config(state=DISABLED)
+
+    Button(lb_win, text="Close", command=lb_win.destroy).pack(pady=5)
+
 def checkIfWon():
     global winner
     winner = False
 
-#CHECK X WINS
-    # winner across
+    # CHECK X WINS
     if b1["text"] == "X" and b2["text"] == "X" and b3["text"] == "X":
         b1.config(bg="green")
         b2.config(bg="green")
@@ -77,6 +124,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("X")
     elif b4["text"] == "X" and b5["text"] == "X" and b6["text"] == "X":
         b4.config(bg="green")
         b5.config(bg="green")
@@ -84,6 +132,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("X")
     elif b7["text"] == "X" and b8["text"] == "X" and b9["text"] == "X":
         b7.config(bg="green")
         b8.config(bg="green")
@@ -91,8 +140,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
-
-# Winner vertical
+        save_winner_to_leaderboard("X")
     elif b1["text"] == "X" and b4["text"] == "X" and b7["text"] == "X":
         b1.config(bg="green")
         b4.config(bg="green")
@@ -100,6 +148,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("X")
     elif b2["text"] == "X" and b5["text"] == "X" and b8["text"] == "X":
         b2.config(bg="green")
         b5.config(bg="green")
@@ -107,6 +156,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("X")
     elif b3["text"] == "X" and b6["text"] == "X" and b9["text"] == "X":
         b3.config(bg="green")
         b6.config(bg="green")
@@ -114,8 +164,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
-
-# Winner Diagonal
+        save_winner_to_leaderboard("X")
     elif b1["text"] == "X" and b5["text"] == "X" and b9["text"] == "X":
         b1.config(bg="green")
         b5.config(bg="green")
@@ -123,6 +172,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("X")
     elif b3["text"] == "X" and b5["text"] == "X" and b7["text"] == "X":
         b3.config(bg="green")
         b5.config(bg="green")
@@ -130,17 +180,17 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "X wins!\nO is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("X")
 
-# CHECK 0 WINS
-    # Winner Across
-    if b1["text"] == "X" and b2["text"] == "O" and b3["text"] == "O":
+    # CHECK O WINS
+    elif b1["text"] == "O" and b2["text"] == "O" and b3["text"] == "O":
         b1.config(bg="green")
         b2.config(bg="green")
         b3.config(bg="green")
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
+        save_winner_to_leaderboard("O")
     elif b4["text"] == "O" and b5["text"] == "O" and b6["text"] == "O":
         b4.config(bg="green")
         b5.config(bg="green")
@@ -148,7 +198,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
+        save_winner_to_leaderboard("O")
     elif b7["text"] == "O" and b8["text"] == "O" and b9["text"] == "O":
         b7.config(bg="green")
         b8.config(bg="green")
@@ -156,8 +206,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
-    # Winner vertical
+        save_winner_to_leaderboard("O")
     elif b1["text"] == "O" and b4["text"] == "O" and b7["text"] == "O":
         b1.config(bg="green")
         b4.config(bg="green")
@@ -165,7 +214,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
+        save_winner_to_leaderboard("O")
     elif b2["text"] == "O" and b5["text"] == "O" and b8["text"] == "O":
         b2.config(bg="green")
         b5.config(bg="green")
@@ -173,7 +222,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
+        save_winner_to_leaderboard("O")
     elif b3["text"] == "O" and b6["text"] == "O" and b9["text"] == "O":
         b3.config(bg="green")
         b6.config(bg="green")
@@ -181,8 +230,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
-    # Winner Diagnol
+        save_winner_to_leaderboard("O")
     elif b1["text"] == "O" and b5["text"] == "O" and b9["text"] == "O":
         b1.config(bg="green")
         b5.config(bg="green")
@@ -190,7 +238,7 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
-
+        save_winner_to_leaderboard("O")
     elif b3["text"] == "O" and b5["text"] == "O" and b7["text"] == "O":
         b3.config(bg="green")
         b5.config(bg="green")
@@ -198,11 +246,18 @@ def checkIfWon():
         winner = True
         messagebox.showinfo("Tic tac Toe", "O wins!\nX is a loser!")
         disable_all_buttons()
+        save_winner_to_leaderboard("O")
 
     # check if tie
     if count == 9 and winner == False:
         messagebox.showinfo("Tic Tac Toe", "You tied! You both lose!")
         disable_all_buttons()
+        # Go back to start menu after tie
+        global root
+        if root:
+            root.destroy()
+        start_menu()
+
 
 # Button clicked function
 def b_click(b):
@@ -223,14 +278,11 @@ def b_click(b):
     else:
         messagebox.showerror("Tic Tac Toe", "Hey! Someone already chose this box!\n          Pick somewhere else!")
 
-
 def run_game():
     global root, b1, b2, b3, b4, b5, b6, b7, b8, b9
     root = Tk()
     root.title('SDEV 120 Tic-Tac-Toe')
 
-    # Build buttons
-    global b1, b2, b3, b4, b5, b6, b7, b8, b9
     b1 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b1))
     b2 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b2))
     b3 = Button(root, text=" ", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace", command=lambda: b_click(b3))
@@ -255,24 +307,33 @@ def run_game():
     root.config(menu=my_menu)
     options_menu = Menu(my_menu, tearoff=False)
     my_menu.add_cascade(label="Start Menu", menu=options_menu)
-    options_menu.add_command(label="back", command=reset_to_start_menu)
+    options_menu.add_command(label="Back", command=reset_to_start_menu)
 
     reset()
+
+    root.update()  # Update "requested size" from geometry manager
+
+    # Now center window based on real window size
+    width = root.winfo_width()
+    height = root.winfo_height()
+    center_window(root, width, height)
+
     root.mainloop()
 
 
 def start_menu():
     start_win = Tk()
     start_win.title("Tic-Tac-Toe Game Menu")
-    start_win.geometry("300x200")
+    start_win.geometry("300x250")
+    center_window(start_win, 300, 250)
 
     Label(start_win, text="Welcome to Tic-Tac-Toe!", font=("Helvetica", 16)).pack(pady=20)
 
     Button(start_win, text="Start Game", font=("Helvetica", 14), width=15, command=lambda: [start_win.destroy(), run_game()]).pack(pady=10)
+    Button(start_win, text="Leaderboard", font=("Helvetica", 14), width=15, command=show_leaderboard).pack(pady=10)
     Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=start_win.quit).pack(pady=10)
 
     start_win.mainloop()
-
 
 # Start from the start menu
 start_menu()
