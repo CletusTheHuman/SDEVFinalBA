@@ -87,7 +87,7 @@ def save_winner_to_leaderboard(winner):
     if initials:
         timestamp = datetime.datetime.now().strftime("%m/%d/%Y %I:%M %p")
         with open(LEADERBOARD_FILE, "a") as f:
-            f.write(f"{timestamp} - {winner} wins - {initials}\n")
+            f.write(f"{timestamp} - {initials}\n")
     global root
     if root:
         root.destroy()
@@ -362,7 +362,7 @@ def start_menu():
 
 
     Button(start_win, text="Start Game", font=("Helvetica", 14), width=15, command=lambda: [start_win.destroy(), run_game()]).pack(pady=5)
-    Button(start_win, text="Leaderboard", font=("Helvetica", 14), width=15, command=show_leaderboard).pack(pady=5)
+    Button(start_win, text="Game History", font=("Helvetica", 14), width=15, command=show_leaderboard).pack(pady=5)
     Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=sys.exit).pack(pady=5)
 
     start_win.mainloop()
