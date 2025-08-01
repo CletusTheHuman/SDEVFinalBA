@@ -50,7 +50,7 @@ def prompt_for_initials():
     popup.title("Enter your initials")
     center_window(popup, 300, 150)  # Center popup window
 
-    Label(popup, text="Winner! Please Enter your initials:").pack(pady=10)
+    Label(popup, text="Winner! Please enter your initials:").pack(pady=10)
 
     initials_var = StringVar()  # Variable to store initials input
 
