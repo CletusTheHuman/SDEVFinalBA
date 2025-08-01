@@ -4,7 +4,9 @@
 from operator import truediv
 from tkinter import *
 from tkinter import messagebox
+from PIL import Image, ImageTk
 import datetime
+
 
 # X starts so true
 clicked = True
@@ -94,13 +96,32 @@ def show_leaderboard():
     """Show leaderboard window reading from leaderboard file"""
     lb_win = Toplevel()
     lb_win.title("Game History")
-    center_window(lb_win, 400, 350)
+    center_window(lb_win, 550, 650)  # Slightly wider to fit the scrollbar
 
-    Label(lb_win, text="Past Winners", font=("Helvetica", 16, "bold")).pack(pady=10)
+    # Image at the top
+    image = Image.open("trophy.jpg")
+    image = image.resize((350, 350))
+    photo = ImageTk.PhotoImage(image)
+    image_label = Label(lb_win, image=photo)
+    image_label.image = photo
+    image_label.pack(pady=5)
 
-    text_box = Text(lb_win, width=40, height=15, font=("Helvetica", 12))
-    text_box.pack(padx=10, pady=10)
+    Label(lb_win, text="Past Winners", font=("Helvetica", 16, "bold")).pack(pady=5)
 
+    # Frame to hold text box and scrollbar side by side
+    frame = Frame(lb_win)
+    frame.pack(padx=10, pady=10, fill=BOTH, expand=True)
+
+    # Scrollbar
+    scrollbar = Scrollbar(frame)
+    scrollbar.pack(side=RIGHT, fill=Y)
+
+    # Text box with attached scrollbar
+    text_box = Text(frame, width=40, height=15, font=("Helvetica", 12), yscrollcommand=scrollbar.set)
+    text_box.pack(side=LEFT, fill=BOTH, expand=True)
+    scrollbar.config(command=text_box.yview)
+
+    # Load leaderboard data
     try:
         with open(LEADERBOARD_FILE, "r") as f:
             content = f.read()
@@ -111,6 +132,8 @@ def show_leaderboard():
     text_box.config(state=DISABLED)
 
     Button(lb_win, text="Close", command=lb_win.destroy).pack(pady=5)
+
+
 
 def checkIfWon():
     global winner
@@ -324,16 +347,25 @@ def run_game():
 def start_menu():
     start_win = Tk()
     start_win.title("Tic-Tac-Toe Game Menu")
-    start_win.geometry("300x250")
-    center_window(start_win, 300, 250)
+    start_win.geometry("300x400")  # made taller for the image
+    center_window(start_win, 300, 350)
 
-    Label(start_win, text="Welcome to Tic-Tac-Toe!", font=("Helvetica", 16)).pack(pady=20)
+    # Load and display the image
+    image = Image.open("toeboard.jpg")
+    image = image.resize((150, 150))  # resize if needed
+    photo = ImageTk.PhotoImage(image)
 
-    Button(start_win, text="Start Game", font=("Helvetica", 14), width=15, command=lambda: [start_win.destroy(), run_game()]).pack(pady=10)
-    Button(start_win, text="Leaderboard", font=("Helvetica", 14), width=15, command=show_leaderboard).pack(pady=10)
-    Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=start_win.quit).pack(pady=10)
+    image_label = Label(start_win, image=photo)
+    image_label.image = photo  # prevent garbage collection
+    image_label.pack(pady=10)
+
+
+    Button(start_win, text="Start Game", font=("Helvetica", 14), width=15, command=lambda: [start_win.destroy(), run_game()]).pack(pady=5)
+    Button(start_win, text="Leaderboard", font=("Helvetica", 14), width=15, command=show_leaderboard).pack(pady=5)
+    Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=start_win.quit).pack(pady=5)
 
     start_win.mainloop()
+
 
 # Start from the start menu
 start_menu()
