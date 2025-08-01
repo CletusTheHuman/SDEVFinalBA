@@ -6,6 +6,7 @@ from tkinter import *
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import datetime
+import sys
 
 
 # X starts so true
@@ -362,7 +363,7 @@ def start_menu():
 
     Button(start_win, text="Start Game", font=("Helvetica", 14), width=15, command=lambda: [start_win.destroy(), run_game()]).pack(pady=5)
     Button(start_win, text="Leaderboard", font=("Helvetica", 14), width=15, command=show_leaderboard).pack(pady=5)
-    Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=start_win.quit).pack(pady=5)
+    Button(start_win, text="Quit", font=("Helvetica", 14), width=15, command=sys.exit).pack(pady=5)
 
     start_win.mainloop()
 
